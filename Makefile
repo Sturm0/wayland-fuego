@@ -9,6 +9,10 @@ xdg-shell-protocol.o: xdg-shell-protocol.c
 xdg-shell-protocol.c: $(PROTOCOLS)/stable/xdg-shell/xdg-shell.xml
 	wayland-scanner private-code $< $@
 	
+xdg-shell-client-protocol.h: $(PROTOCOLS)/stable/xdg-shell/xdg-shell.xml
+	wayland-scanner client-header $< $@
+
+
 .PHONY: clean
 clean:
 	rm fueguito xdg-shell-protocol.o xdg-shell-protocol.c
