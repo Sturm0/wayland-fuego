@@ -13,8 +13,8 @@
 #include <assert.h>
 #include <xkbcommon/xkbcommon.h>
 #include <cstdint>
+#include <algorithm>
 
-//~ int width = 1000, height = 600;
 int intensidad_maxima_fuego = 36; // máximo indice en palette_xrgb8888
 int ancho_fuego = 40;
 int alto_fuego = 40;
@@ -32,11 +32,10 @@ static const uint32_t palette_xrgb8888[] = {0x00070707, 0x001F0707, 0x002F0F07, 
                                           , 0x00EFEFC7, 0x00FFFFFF};
 
 int* crear_estructura_de_datos_fuego() {
-    int cant_pixeles = ancho_fuego*alto_fuego;
-    return new int[cant_pixeles]();
+    return new int[ancho_fuego*alto_fuego]();
 }
 void crear_origen_fuego(int intensidad = intensidad_maxima_fuego) {
-    for (int columna = 0; columna <= ancho_fuego; columna++)
+    for (int columna = 0; columna < ancho_fuego; columna++)
     {
         int ultimo_pixel = ancho_fuego*alto_fuego;
         arreglo_intensidades[ultimo_pixel-ancho_fuego + columna] = intensidad;
@@ -51,7 +50,7 @@ void actualizar_intesidad_fuego_por_pixel(int indice_pixel_actual) {
 
     int decaimiento = rand()%decaimiento_máximo;
     //esto hace que en vez de necesariamente modificar la intensidad que estoy "mirando" modifique una de los costados, lo cual da la sensación de que hay viento 
-    int intensidad_a_modificar = indice_pixel_actual-decaimiento >= 0 && indice_pixel_actual-decaimiento <= ancho_fuego*alto_fuego ? indice_pixel_actual-decaimiento : indice_pixel_actual;
+    int intensidad_a_modificar = indice_pixel_actual-decaimiento >= 0 && indice_pixel_actual-decaimiento < ancho_fuego*alto_fuego ? indice_pixel_actual-decaimiento : indice_pixel_actual;
     arreglo_intensidades[intensidad_a_modificar] = arreglo_intensidades[indice_pixel_de_abajo] - decaimiento >= 0 ? arreglo_intensidades[indice_pixel_de_abajo] - decaimiento : 0;
 }
 
@@ -201,14 +200,16 @@ static struct wl_buffer* draw_frame(struct client_state *state)
     close(fd);
     
     int minimo = std::min(width,height);
-    int escala = std::min(width,height)/40; 
-    int offset = (std::max(width,height)-minimo)/2;
+    int escala = std::max(minimo/40 , 1); 
+    int offset = width > height ? (width-height)/2 : 0;
     
     // arreglo_intensidades tiene la intensidad del fuego para cada pixel 
     for (int y = 0; y < minimo; ++y) {
         for (int x = 0; x < minimo; ++x) 
         {
-            data[y*width+x+offset] = palette_xrgb8888[arreglo_intensidades[y/escala *ancho_fuego+  x/escala]];
+            int y_n =  std::clamp(y/escala,0,39);
+            int x_n =  std::clamp(x/escala,0,39);
+            data[y*width+x+offset] = palette_xrgb8888[arreglo_intensidades[y_n *ancho_fuego+  x_n]];
             
         }
         
