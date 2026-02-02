@@ -19,3 +19,5 @@ Si estás bajo una sesión x11 entonces podes descargar weston (un compositor wa
 
 ```sudo apt install weston```
 ```weston -- ./fueguito```
+
+Para controlar la intensidad del fuego usar "+" y "-"
