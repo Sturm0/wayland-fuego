@@ -28,15 +28,16 @@ long_line_behaviour=1
 long_line_column=100
 
 [files]
-current_page=4
-FILE_NAME_0=1846;C++;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2Ffuego.cpp;0;4
-FILE_NAME_1=41;Make;0;EUTF-8;1;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2FMakefile;0;4
+current_page=0
+FILE_NAME_0=443;C++;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2Ffuego.cpp;0;4
+FILE_NAME_1=40;Make;0;EUTF-8;1;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2FMakefile;0;4
 FILE_NAME_2=0;Sh;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2Fejecutar.sh;0;4
 FILE_NAME_3=86;None;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2F.gitignore;0;4
-FILE_NAME_4=461;Markdown;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2FREADME.md;0;4
+FILE_NAME_4=536;Markdown;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2FREADME.md;0;4
+FILE_NAME_5=19550;C++;0;EUTF-8;0;1;0;%2Fusr%2Finclude%2Fwayland-util.h;0;4
 
 [VTE]
-last_dir=/home/federico/Documents/wayland-fuego
+last_dir=/home/federico/Documents
 
 [lsp]
 enabled=true

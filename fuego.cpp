@@ -14,6 +14,7 @@
 #include <xkbcommon/xkbcommon.h>
 #include <cstdint>
 #include <algorithm>
+// TODO: cuando hago resize el lado derecho de la animación se ve raro 
 
 int intensidad_maxima_fuego = 36; // máximo indice en palette_xrgb8888
 int ancho_fuego = 40;
@@ -136,6 +137,8 @@ struct client_state {
     struct xkb_keymap *xkb_keymap;
     uint32_t ultimo_frame_dibujado; // el ultimo frame en el que avancé la animación de fuego
     int width, height;
+    bool tengo_búfer; // esto es para evitar que xdg-surface-configure redibuje mil veces la ventana cuando se esta haciendo un resize
+                      // más información sobre eso en xdg_surface_configure 
 };
 
 static void
@@ -148,6 +151,7 @@ xdg_toplevel_configure(void *data,
 		/* Compositor is deferring to us */
 		return;
 	}
+    
 	state->width = width;
 	state->height = height;
 }
@@ -224,10 +228,18 @@ xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, uint32_t seri
 {
     struct client_state* state = (struct client_state*)data;
     xdg_surface_ack_configure(xdg_surface, serial);
-
-    struct wl_buffer *buffer = draw_frame(state);
-    wl_surface_attach(state->wl_surface, buffer, 0, 0);
-    wl_surface_commit(state->wl_surface);
+    // quiero evitar que esto redibuje 1000 veces cuando hago un resize, pero tengo que escribir por lo menos 
+    // una vez para que después enganche wl_frame_done, ya que:
+    //~ "A server should avoid signaling the frame callbacks if the surface is not visible
+    // in any way, e.g. the surface is off-screen, or completely obscured by other opaque surfaces."
+    // osea, si no pongo algo visible entonces nunca hace el callback :) 
+     if (!state->tengo_búfer) {
+        struct wl_buffer *buffer = draw_frame(state);
+        wl_surface_attach(state->wl_surface, buffer, 0, 0);
+        wl_surface_commit(state->wl_surface);
+        state->tengo_búfer = true;
+    }
+    
 }
 
 static const struct xdg_surface_listener xdg_surface_listener = {
@@ -470,6 +482,7 @@ main(int argc, char *argv[])
     xdg_surface_add_listener(state.xdg_surface, &xdg_surface_listener, &state);
     state.xdg_toplevel = xdg_surface_get_toplevel(state.xdg_surface);
     xdg_toplevel_add_listener(state.xdg_toplevel,&xdg_toplevel_listener, &state);
+    xdg_toplevel_set_min_size(state.xdg_toplevel,40,40);
     xdg_toplevel_set_title(state.xdg_toplevel, "Cliente de ejemplo");
     wl_surface_commit(state.wl_surface);
 
