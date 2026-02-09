@@ -130,6 +130,7 @@ struct client_state {
     struct xdg_surface *xdg_surface;
     struct xdg_toplevel *xdg_toplevel;
     struct wl_keyboard *wl_keyboard;
+    struct zxdg_toplevel_decoration_v1*  zxdg_toplevel_decoration_v1;
     /* Estado */
     float offset;
     uint32_t last_frame;
@@ -318,7 +319,6 @@ wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
                struct wl_array *keys)
 {
        struct client_state* client_state = (struct client_state*)data;
-       fprintf(stderr, "keyboard enter; keys pressed are:\n");
        
        for (uint32_t* key = (uint32_t*)(keys->data); (const char*)key < (const char*) keys->data + keys->size ; key++)
        {
@@ -326,10 +326,8 @@ wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
                xkb_keysym_t sym = xkb_state_key_get_one_sym(
                                client_state->xkb_state, *key + 8);
                xkb_keysym_get_name(sym, buf, sizeof(buf));
-               fprintf(stderr, "sym: %-12s (%d), ", buf, sym);
                xkb_state_key_get_utf8(client_state->xkb_state,
                                *key + 8, buf, sizeof(buf));
-               fprintf(stderr, "utf8: '%s'\n", buf);
        }
        
        
@@ -497,9 +495,23 @@ main(int argc, char *argv[])
         zxdg_toplevel_decoration_v1_set_mode(decoracion,ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
     }
     
-    while (wl_display_dispatch(state.wl_display)) {
-        /* This space deliberately left blank */ 
+    while (!state.closed && wl_display_dispatch(state.wl_display)) {
+        /* Espacio en blanco adrede */ 
     }
-    
+    xdg_toplevel_destroy(state.xdg_toplevel);
+    xdg_surface_destroy(state.xdg_surface);
+    wl_surface_destroy(state.wl_surface);
+    wl_shm_destroy(state.wl_shm);
+    wl_keyboard_release(state.wl_keyboard);
+    wl_seat_destroy(state.wl_seat);
+    xkb_state_unref(state.xkb_state);
+    xkb_keymap_unref(state.xkb_keymap);
+    xkb_context_unref(state.xkb_context);
+    if (state.zxdg_toplevel_decoration_v1 != nullptr) {
+        zxdg_toplevel_decoration_v1_destroy(state.zxdg_toplevel_decoration_v1);
+        zxdg_decoration_manager_v1_destroy(state.manejador_decoración);
+    }
+    wl_display_disconnect(state.wl_display);
+    delete[] arreglo_intensidades;
     return 0;
 }

@@ -28,8 +28,8 @@ long_line_behaviour=1
 long_line_column=100
 
 [files]
-current_page=3
-FILE_NAME_0=16388;C++;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2Ffuego.cpp;0;4
+current_page=0
+FILE_NAME_0=13534;C++;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2Ffuego.cpp;0;4
 FILE_NAME_1=7671;C++;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2Fxdg-decoration-client.h;0;4
 FILE_NAME_2=233;Make;0;EUTF-8;1;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2FMakefile;0;4
 FILE_NAME_3=102;None;0;EUTF-8;0;1;0;%2Fhome%2Ffederico%2FDocuments%2Fwayland-fuego%2F.gitignore;0;4
