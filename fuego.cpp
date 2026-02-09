@@ -14,7 +14,8 @@
 #include <xkbcommon/xkbcommon.h>
 #include <cstdint>
 #include <algorithm>
-// TODO: cuando hago resize el lado derecho de la animación se ve raro 
+#include "xdg-decoration-client.h"
+// TODO: cuando hago resize el lado derecho de la animación se ve raro 1675x552 <- en esta resolución pasa ? 
 
 int intensidad_maxima_fuego = 36; // máximo indice en palette_xrgb8888
 int ancho_fuego = 40;
@@ -123,6 +124,7 @@ struct client_state {
     struct wl_compositor *wl_compositor;
     struct xdg_wm_base *xdg_wm_base;
     struct wl_seat *wl_seat;
+    struct zxdg_decoration_manager_v1* manejador_decoración;
     /* Objetos */
     struct wl_surface *wl_surface;
     struct xdg_surface *xdg_surface;
@@ -151,7 +153,6 @@ xdg_toplevel_configure(void *data,
 		/* Compositor is deferring to us */
 		return;
 	}
-    
 	state->width = width;
 	state->height = height;
 }
@@ -446,7 +447,9 @@ registry_global(void *data, struct wl_registry *wl_registry,
     } else if (strcmp(interface, wl_seat_interface.name) == 0) {
               state->wl_seat = (struct wl_seat*)wl_registry_bind(wl_registry, name, &wl_seat_interface, 7);
               wl_seat_add_listener(state->wl_seat,&wl_seat_listener, state);
-        }
+    } else if (strcmp(interface,zxdg_decoration_manager_v1_interface.name) == 0) {
+              state->manejador_decoración = (struct zxdg_decoration_manager_v1*)wl_registry_bind(wl_registry,name,&zxdg_decoration_manager_v1_interface,1);
+    }
 }
 
 static void
@@ -465,8 +468,8 @@ int
 main(int argc, char *argv[])
 {
     struct client_state state = { 0 };
-    state.width = 640;
-	state.height = 480;
+    state.width = 1675;
+	state.height = 552;
     state.wl_display = wl_display_connect(NULL);
     state.wl_registry = wl_display_get_registry(state.wl_display);
     state.xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
@@ -489,8 +492,10 @@ main(int argc, char *argv[])
     struct wl_callback *cb = wl_surface_frame(state.wl_surface);
     wl_callback_add_listener(cb, &wl_surface_frame_listener, &state);
     
-    
-    
+    if (state.manejador_decoración != nullptr) {
+        zxdg_toplevel_decoration_v1* decoracion = zxdg_decoration_manager_v1_get_toplevel_decoration(state.manejador_decoración,state.xdg_toplevel);
+        zxdg_toplevel_decoration_v1_set_mode(decoracion,ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+    }
     
     while (wl_display_dispatch(state.wl_display)) {
         /* This space deliberately left blank */ 

@@ -3,3 +3,4 @@ fueguito
 prueba_loca.cpp
 xdg-shell-client-protocol.*
 xdg-shell-protocol.*
+xdg-decoration-*
