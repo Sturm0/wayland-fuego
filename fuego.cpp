@@ -368,7 +368,7 @@ static void
 wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, struct wl_surface *surface)
 {
-       fprintf(stderr, "keyboard leave\n");
+    // vacío adrede
 }
 
 static void
