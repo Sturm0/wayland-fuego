@@ -206,15 +206,15 @@ static struct wl_buffer* draw_frame(struct client_state *state)
     close(fd);
     
     int minimo = std::min(width,height);
-    int escala = std::max(minimo/40 , 1); 
+    int escala = std::max(minimo/40 , 1);
     int offset = width > height ? (width-height)/2 : 0;
     
     // arreglo_intensidades tiene la intensidad del fuego para cada pixel 
     for (int y = 0; y < minimo; ++y) {
-        for (int x = 0; x < minimo; ++x) 
+        for (int x = 0; x < minimo; ++x)
         {
-            int y_n =  std::clamp(y/escala,0,39);
-            int x_n =  std::clamp(x/escala,0,39);
+            int y_n =  y *40 /minimo;
+            int x_n =  x*40 / minimo;
             data[y*width+x+offset] = palette_xrgb8888[arreglo_intensidades[y_n *ancho_fuego+  x_n]];
             
         }
